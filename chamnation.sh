@@ -13,13 +13,13 @@ USER=$(whoami)
 YOUTUBE="http://youtube.com/channel/UCP4CuIbDHok4YsEsIUz5utw/live"
 
 update_client () {
-    REPO="https://raw.githubusercontent.com/ChamTech616/ChamTV/main"
+    REPO="https://raw.githubusercontent.com/ChamTech616/ChamTV/main/chamnation.sh"
     TEMP="/tmp/chamnation.sh"
     DEST="/home/$HOST/chamnation.sh"
 
     echo "Downloading latest version..."
 
-    curl -L "$REPO/chamnation.sh" -o "$TEMP"
+    curl -L "$REPO" -o "$TEMP"
 
     # Make sure download succeeded
     if [ ! -s "$TEMP" ]; then
@@ -43,20 +43,29 @@ LAST_PREVIEW=0
 
 take_screenshot () {
 
+    export DISPLAY=:0
+    export XAUTHORITY="/home/$HOST/.Xauthority"
+
     FILE="/tmp/$HOST.jpg"
 
-    # Compress image so it fits Firebase
-    scrot -q 35 "$FILE"
+    # Delete the old image first
+    rm -f "$FILE"
 
-    IMAGE=$(base64 -w 0 "$FILE")
+    # Capture a fresh screenshot
+    if ! scrot -q 35 "$FILE"; then
+        echo "Screenshot failed"
+        return
+    fi
+
     TIME=$(date +%s)
+    IMAGE=$(base64 -w 0 "$FILE")
 
     curl -s -X PATCH \
     "$DB/displays/$HOST.json" \
     -H "Content-Type: application/json" \
     -d "{
-        \"screenshot\":\"$IMAGE\",
-        \"screenshotTime\":$TIME
+      \"screenshot\":\"$IMAGE\",
+      \"screenshotTime\":$TIME
     }" >/dev/null
 }
 
@@ -83,7 +92,7 @@ heartbeat () {
         \"status\":\"online\",
         \"uptime\":$UPTIME,
         \"lastSeen\":$LAST,
-        \"version\":\"V1.3\"
+        \"version\":\"v1.4\"
     }" >/dev/null
 }
 
@@ -115,7 +124,7 @@ check_commands () {
             \"status\":\"rebooting\",
             \"uptime\":$UPTIME,
             \"lastSeen\":$LAST,
-            \"version\":\"V1.3\"
+            \"version\":\"v1.4\"
         }" >/dev/null
         reboot now
     fi
@@ -134,7 +143,7 @@ check_commands () {
             \"status\":\"shutting_down/offline\",
             \"uptime\":$UPTIME,
             \"lastSeen\":$LAST,
-            \"version\":\"V1.2\"
+            \"version\":\"v1.4\"
         }" >/dev/null
         shutdown now
     fi
