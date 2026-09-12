@@ -12,6 +12,54 @@ USER=$(whoami)
 
 YOUTUBE="http://youtube.com/channel/UCP4CuIbDHok4YsEsIUz5utw/live"
 
+update_client () {
+    REPO="https://raw.githubusercontent.com/ChamTech616/ChamTV/main"
+    TEMP="/tmp/chamnation.sh"
+    DEST="/home/$HOST/chamnation.sh"
+
+    echo "Downloading latest version..."
+
+    curl -L "$REPO/chamnation.sh" -o "$TEMP"
+
+    # Make sure download succeeded
+    if [ ! -s "$TEMP" ]; then
+        echo "Update failed."
+        return
+    fi
+
+    echo "Installing..."
+
+    mv "$TEMP" "$DEST"
+
+    chmod +x "$DEST"
+
+    echo "Rebooting..."
+    sleep 3
+
+    sudo reboot
+}
+
+LAST_PREVIEW=0
+
+take_screenshot () {
+
+    FILE="/tmp/$HOST.jpg"
+
+    # Compress image so it fits Firebase
+    scrot -q 35 "$FILE"
+
+    IMAGE=$(base64 -w 0 "$FILE")
+    TIME=$(date +%s)
+
+    curl -s -X PATCH \
+    "$DB/displays/$HOST.json" \
+    -H "Content-Type: application/json" \
+    -d "{
+        \"screenshot\":\"$IMAGE\",
+        \"screenshotTime\":$TIME
+    }" >/dev/null
+}
+
 launch_stream () {
     pkill chromium 2>/dev/null
     sleep 2
@@ -35,7 +83,7 @@ heartbeat () {
         \"status\":\"online\",
         \"uptime\":$UPTIME,
         \"lastSeen\":$LAST,
-        \"version\":\"V1.2\"
+        \"version\":\"V1.3\"
     }" >/dev/null
 }
 
@@ -67,7 +115,7 @@ check_commands () {
             \"status\":\"rebooting\",
             \"uptime\":$UPTIME,
             \"lastSeen\":$LAST,
-            \"version\":\"V1.2\"
+            \"version\":\"V1.3\"
         }" >/dev/null
         reboot now
     fi
@@ -110,6 +158,11 @@ launch_stream
 while true
 do
     heartbeat
+    NOW=$(date +%s)
+    if (( NOW - LAST_PREVIEW >= 300 )); then
+        LAST_PREVIEW=$NOW
+        take_screenshot
+    fi
     check_commands
     sleep 30
 done
