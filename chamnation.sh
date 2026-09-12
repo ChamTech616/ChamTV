@@ -38,7 +38,7 @@ update_client () {
     echo "Rebooting..."
     sleep 3
 
-    reboot now
+    sudo /usr/sbin/reboot
 }
 
 take_screenshot () {
@@ -137,7 +137,7 @@ check_commands () {
             \"lastSeen\":$LAST,
             \"version\":\"v1.4.1\"
         }" >/dev/null
-        reboot now
+        sudo /usr/sbin/reboot
     fi
 
     if [ "$SHUTDOWN" = "true" ]; then
@@ -156,7 +156,7 @@ check_commands () {
             \"lastSeen\":$LAST,
             \"version\":\"v1.4.1\"
         }" >/dev/null
-        shutdown now
+        sudo /usr/sbin/shutdown -h now
     fi
 
     if [ "$UPDATE" = "true" ]; then
