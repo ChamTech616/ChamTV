@@ -10,6 +10,8 @@ CHANNEL="UCP4CuIbDHok4YsEsIUz5utw"
 HOST=$(hostname)
 USER=$(whoami)
 
+LAST_PREVIEW=0
+
 YOUTUBE="http://youtube.com/channel/UCP4CuIbDHok4YsEsIUz5utw/live"
 
 update_client () {
@@ -36,37 +38,46 @@ update_client () {
     echo "Rebooting..."
     sleep 3
 
-    sudo reboot
+    reboot now
 }
-
-LAST_PREVIEW=0
 
 take_screenshot () {
 
     export DISPLAY=:0
-    export XAUTHORITY="/home/$USER/.Xauthority"
+    export XAUTHORITY="/home/$HOST/.Xauthority"
 
     FILE="/tmp/$HOST.jpg"
 
-    # Delete the old image first
+    # Remove the previous image
     rm -f "$FILE"
 
-    # Capture a fresh screenshot
-    if ! scrot -q 35 "$FILE"; then
-        echo "Screenshot failed"
+    # Take a new screenshot
+    scrot -q 35 "$FILE"
+    RESULT=$?
+
+    if [ $RESULT -ne 0 ]; then
+        echo "SCROT FAILED ($RESULT)"
         return
     fi
 
-    TIME=$(date +%s)
+    # Verify the file was actually created
+    if [ ! -f "$FILE" ]; then
+        echo "Screenshot file missing"
+        return
+    fi
+
+    echo "Created: $(stat -c %y "$FILE")"
+
     IMAGE=$(base64 -w 0 "$FILE")
+    TIME=$(date +%s)
 
     curl -s -X PATCH \
-    "$DB/displays/$HOST.json" \
-    -H "Content-Type: application/json" \
-    -d "{
-      \"screenshot\":\"$IMAGE\",
-      \"screenshotTime\":$TIME
-    }" >/dev/null
+      "$DB/displays/$HOST.json" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"screenshot\":\"$IMAGE\",
+        \"screenshotTime\":$TIME
+      }" >/dev/null
 }
 
 launch_stream () {
@@ -92,7 +103,7 @@ heartbeat () {
         \"status\":\"online\",
         \"uptime\":$UPTIME,
         \"lastSeen\":$LAST,
-        \"version\":\"v1.4\"
+        \"version\":\"v1.4.1\"
     }" >/dev/null
 }
 
@@ -124,7 +135,7 @@ check_commands () {
             \"status\":\"rebooting\",
             \"uptime\":$UPTIME,
             \"lastSeen\":$LAST,
-            \"version\":\"v1.4\"
+            \"version\":\"v1.4.1\"
         }" >/dev/null
         reboot now
     fi
@@ -143,7 +154,7 @@ check_commands () {
             \"status\":\"shutting_down/offline\",
             \"uptime\":$UPTIME,
             \"lastSeen\":$LAST,
-            \"version\":\"v1.4\"
+            \"version\":\"v1.4.1\"
         }" >/dev/null
         shutdown now
     fi
