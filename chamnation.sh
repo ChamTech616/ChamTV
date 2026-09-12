@@ -15,7 +15,7 @@ YOUTUBE="http://youtube.com/channel/UCP4CuIbDHok4YsEsIUz5utw/live"
 update_client () {
     REPO="https://raw.githubusercontent.com/ChamTech616/ChamTV/main/chamnation.sh"
     TEMP="/tmp/chamnation.sh"
-    DEST="/home/$HOST/chamnation.sh"
+    DEST="/home/$USER/chamnation.sh"
 
     echo "Downloading latest version..."
 
@@ -44,7 +44,7 @@ LAST_PREVIEW=0
 take_screenshot () {
 
     export DISPLAY=:0
-    export XAUTHORITY="/home/$HOST/.Xauthority"
+    export XAUTHORITY="/home/$USER/.Xauthority"
 
     FILE="/tmp/$HOST.jpg"
 
