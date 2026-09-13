@@ -178,11 +178,7 @@ launch_stream
 while true
 do
     heartbeat
-    NOW=$(date +%s)
-    if (( NOW - LAST_PREVIEW >= 300 )); then
-        LAST_PREVIEW=$NOW
-        take_screenshot
-    fi
+    take_screenshot
     check_commands
     sleep 30
 done
