@@ -1,0 +1,26 @@
+If you Don't understand please let me know (Sean nepomuceno) or have any questions.
+
+1. Open Lite Terminal then type/paste in these commands
+sudo apt update
+sudo apt install chromium-browser -y
+sudo apt install scrot
+
+2. You would need to add premission for user account to use shutdown and reboot commands without passwords
+sudo visudo
+chaminade1 ALL=(ALL) NOPASSWD: /usr/sbin/reboot, /usr/sbin/shutdown
+
+sudo visudo -f /etc/sudoers.d/chamnation
+chaminade1 ALL=(ALL) NOPASSWD: /usr/sbin/reboot, /usr/sbin/shutdown
+
+3. right click on chamnation.sh file then hover over "open with" then click Lite text
+
+4. Ctrl + A then Ctrl + C all the code
+
+5. go back into the Terminal then type the command
+nano ./chamnation.sh
+# this will bring you into a Terminal based text editor
+
+6. right click then paste, then after do ctrl + X and enter
+
+7. then run the following command 
+chmod +x ~/chamnation.sh

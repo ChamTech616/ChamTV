@@ -44,9 +44,9 @@ update_client () {
 take_screenshot () {
 
     export DISPLAY=:0
-    export XAUTHORITY="/home/$HOST/.Xauthority"
+    export XAUTHORITY="/home/$USER/.Xauthority"
 
-    FILE="/tmp/$HOST.jpg"
+    FILE="/tmp/$USER.jpg"
 
     # Remove the previous image
     rm -f "$FILE"
