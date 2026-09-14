@@ -4,6 +4,13 @@
 # CHAMNATION TV CLIENT v1.0
 # ==========================================
 
+LOG="/home/$HOST/chamnation.log"
+
+exec >> "$LOG" 2>&1
+
+echo "=============================="
+echo "Started: $(date)"
+
 DB="https://chaminadetv-86055-default-rtdb.firebaseio.com"
 CHANNEL="UCP4CuIbDHok4YsEsIUz5utw"
 
