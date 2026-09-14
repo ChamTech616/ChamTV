@@ -8,8 +8,7 @@ LOG="/home/$HOST/chamnation.log"
 
 exec >> "$LOG" 2>&1
 
-echo "=============================="
-echo "Started: $(date)"
+echo "========== START $(date) =========="
 
 DB="https://chaminadetv-86055-default-rtdb.firebaseio.com"
 CHANNEL="UCP4CuIbDHok4YsEsIUz5utw"
@@ -20,6 +19,24 @@ USER=$(whoami)
 LAST_PREVIEW=0
 
 YOUTUBE="http://youtube.com/channel/UCP4CuIbDHok4YsEsIUz5utw/live"
+
+upload_log () {
+
+    LOGFILE="/home/$USER/chamnation.log"
+
+    [ ! -f "$LOGFILE" ] && return
+
+    LOG_B64=$(base64 -w 0 "$LOGFILE")
+    TIME=$(date +%s)
+
+    curl -s -X PATCH \
+      "$DB/displays/$HOST.json" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"log\":\"$LOG_B64\",
+        \"logTime\":$TIME
+      }" >/dev/null
+}
 
 update_client () {
     REPO="https://raw.githubusercontent.com/ChamTech616/ChamTV/main/chamnation.sh"
@@ -187,5 +204,6 @@ do
     heartbeat
     take_screenshot
     check_commands
+    upload_log
     sleep 30
 done
