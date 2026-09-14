@@ -4,7 +4,7 @@
 # CHAMNATION TV CLIENT v1.0
 # ==========================================
 
-LOG="/home/$HOST/chamnation.log"
+LOG="/home/$USER/chamnation.log"
 
 exec >> "$LOG" 2>&1
 
@@ -127,7 +127,7 @@ heartbeat () {
         \"status\":\"online\",
         \"uptime\":$UPTIME,
         \"lastSeen\":$LAST,
-        \"version\":\"v1.4.1\"
+        \"version\":\"v1.4.2\"
     }" >/dev/null
 }
 
@@ -159,7 +159,7 @@ check_commands () {
             \"status\":\"rebooting\",
             \"uptime\":$UPTIME,
             \"lastSeen\":$LAST,
-            \"version\":\"v1.4.1\"
+            \"version\":\"v1.4.2\"
         }" >/dev/null
         sudo /usr/sbin/reboot
     fi
@@ -178,7 +178,7 @@ check_commands () {
             \"status\":\"shutting_down/offline\",
             \"uptime\":$UPTIME,
             \"lastSeen\":$LAST,
-            \"version\":\"v1.4.1\"
+            \"version\":\"v1.4.2\"
         }" >/dev/null
         sudo /usr/sbin/shutdown -h now
     fi
